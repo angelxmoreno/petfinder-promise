@@ -1,6 +1,6 @@
 {
   "name": "petfinder-promise",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Node module providing Promise based functionality to the PetFinder API",
   "main": "index.js",
   "scripts": {
