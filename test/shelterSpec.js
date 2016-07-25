@@ -70,4 +70,43 @@ describe.only('Shelter', function () {
             });
         });
     });
+
+    describe('.getPets', function () {
+        it('should be a promise', function () {
+            expect(petfinder.shelter.getPets(sample_shelter.id)).to.be.fulfilled;
+            expect(petfinder.shelter.getPets('')).to.be.rejected;
+        });
+
+        it('should return pets that are in a given shelter', function (done) {
+            petfinder.shelter.getPets(sample_shelter.id).then(function (pets) {
+                expect(pets.length).to.be.above(1);
+                expect(pets[0]).to.have.property('shelterId', sample_shelter.id);
+                expect(pets[parseInt(pets.length - 1)]).to.have.property('shelterId', sample_shelter.id);
+                done();
+            });
+        });
+
+        /**
+         * @TODO this assertion seems to be failing in core
+         */
+        xit('should return only pet dogs that are in a given shelter', function (done) {
+            petfinder.shelter.getPets(sample_shelter.id, {
+                animal: 'dog',
+                count: 2
+            }).then(function (pets) {
+                expect(pets.length).to.be.above(1);
+                expect(pets[0]).to.have.property('animal', 'Dog');
+                expect(pets[1]).to.have.property('animal', 'Dog');
+                done();
+            });
+        });
+
+        it('should return error when given no shelter id', function (done) {
+            petfinder.shelter.get('').catch(function (err) {
+                expect(err).to.exist.and.be.instanceof(Error)
+                    .and.have.property('message', 'Must supply shelter id.');
+                done();
+            });
+        });
+    });
 });
