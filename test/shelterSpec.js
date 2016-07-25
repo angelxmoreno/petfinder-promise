@@ -13,7 +13,7 @@ var sample_shelter = {
  *
  * It would be better to make these assertions without making this assumptions.
  */
-describe.only('Shelter', function () {
+describe('Shelter', function () {
     describe('.find', function () {
         it('should be a promise', function () {
             expect(petfinder.shelter.find('10003')).to.be.fulfilled;
@@ -105,6 +105,40 @@ describe.only('Shelter', function () {
             petfinder.shelter.get('').catch(function (err) {
                 expect(err).to.exist.and.be.instanceof(Error)
                     .and.have.property('message', 'Must supply shelter id.');
+                done();
+            });
+        });
+    });
+
+    describe('.listByBreed', function () {
+        it('should be a promise', function () {
+            expect(petfinder.shelter.listByBreed('cat', 'Tabby', {'count': 1})).to.be.fulfilled;
+            expect(petfinder.shelter.listByBreed('')).to.be.rejected;
+        });
+
+        /**
+         * @TODO this assertion seems to be failing in core
+         */
+        xit('should return a list of shelters that have a specific breed', function (done) {
+            petfinder.shelter.listByBreed('cat', 'Tabby', {count: 2}).then(function (shelters) {
+                expect(shelters).to.be.instanceof(Array);
+                expect(shelters.length).to.be.above(1);
+                done();
+            });
+        });
+
+        it('should return error when given no animal type.', function (done) {
+            petfinder.shelter.listByBreed('', 'Tabby', {count: 2}).catch(function (err) {
+                expect(err).to.exist.and.be.instanceof(Error)
+                    .and.have.property('message', 'Must supply animal type.');
+                done();
+            });
+        });
+
+        it('should return error when given no breed', function (done) {
+            petfinder.shelter.listByBreed('cat', '', {count: 2}).catch(function (err) {
+                expect(err).to.exist.and.be.instanceof(Error)
+                    .and.have.property('message', 'Must supply breed.');
                 done();
             });
         });
